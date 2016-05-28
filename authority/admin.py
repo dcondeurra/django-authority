@@ -1,12 +1,13 @@
 from django import forms, template
+from django.forms import utils
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext, ungettext, ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django.forms.formsets import all_valid
 from django.contrib import admin
-from django.contrib.admin import helpers
-from django.contrib.contenttypes import generic
+from django.contrib.admin import helpers, options
+from django.contrib.contenttypes import admin as admin_generic
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 
@@ -25,7 +26,7 @@ from authority.widgets import GenericForeignKeyRawIdWidget
 from authority import get_choices_for
 
 
-class PermissionInline(generic.GenericTabularInline):
+class PermissionInline(admin_generic.GenericTabularInline):
     model = Permission
     raw_id_fields = ('user', 'group', 'creator')
     extra = 1
@@ -43,7 +44,7 @@ class ActionPermissionInline(PermissionInline):
     template = 'admin/edit_inline/action_tabular.html'
 
 
-class ActionErrorList(forms.utils.ErrorList):
+class ActionErrorList(utils.ErrorList):
     def __init__(self, inline_formsets):
         for inline_formset in inline_formsets:
             self.extend(inline_formset.non_form_errors())
@@ -127,7 +128,7 @@ def edit_permissions(modeladmin, request, queryset):
 edit_permissions.short_description = _("Edit permissions for selected %(verbose_name_plural)s")
 
 
-class PermissionAdmin(admin.ModelAdmin):
+class PermissionAdmin(options.ModelAdmin):
     list_display = ('codename', 'content_type', 'user', 'group', 'approved')
     list_filter = ('approved', 'content_type')
     search_fields = ('user__username', 'group__name', 'codename')
