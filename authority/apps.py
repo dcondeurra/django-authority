@@ -1,8 +1,6 @@
 from django.apps import AppConfig
-from django.contrib.auth import user_logged_in
-from accounts.signal_handlers import set_language
 
-__author__ = 'dniel'
+__author__ = 'dconde.urra@piensadigital.cl'
 
 
 class AuthorityConfig(AppConfig):
